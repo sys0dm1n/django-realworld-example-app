@@ -17,8 +17,8 @@ django:
   cpu_requests: 100m
 
 health_check: /api/
-health_initialDelaySeconds: 5
-health_timeoutSeconds: 2
+health_initialDelaySeconds: 20
+health_timeoutSeconds: 5
 health_periodSeconds: 10
 
 # Horizontal Pod Autoscaler Configuration
