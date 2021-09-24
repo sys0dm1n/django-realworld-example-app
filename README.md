@@ -1,24 +1,41 @@
-# ![Django DRF Example App](project-logo.png)
+# Prerequisite 
 
-> ### Example Django DRF codebase containing real world examples (CRUD, auth, advanced patterns, etc) that adheres to the [RealWorld](https://github.com/gothinkster/realworld-example-apps) API spec.
+- [Kubernetes Cluster](https://kubernetes.io/)
+- [Helm](https://helm.sh/)
+- [Dockerhub](https://hub.docker.com/r/sys0dm1n/django-realworld-example-app)
 
-<a href="https://thinkster.io/tutorials/django-json-api" target="_blank"><img width="454" src="https://raw.githubusercontent.com/gothinkster/realworld/master/media/learn-btn-hr.png" /></a>
+# About
 
-This repo is functionality complete — PR's and issues welcome!
+This Helm chart will deploy a highly available and scalable [Django app](https://github.com/gothinkster/django-realworld-example-app)
 
-## Installation
+To handle the scalability, I am using the `HorizontalPodAutoscaler`.
+To make it resilient, I am using the `livenessProbe` and `readinessProbe`.
+To make sure the app has at least one running pod on every node of the K8s cluster, I am using the `deployment` with multiple replicas.
+To expose the application I am using `NodePort` but we can also use `LoadBalancer` which will exposes the Service externally using a cloud provider's load balancer.
 
-1. Clone this repository: `git clone git@github.com:gothinkster/productionready-django-api.git`.
-2. `cd` into `conduit-django`: `cd productionready-django-api`.
-3. Install [pyenv](https://github.com/yyuu/pyenv#installation).
-4. Install [pyenv-virtualenv](https://github.com/yyuu/pyenv-virtualenv#installation).
-5. Install Python 3.5.2: `pyenv install 3.5.2`.
-6. Create a new virtualenv called `productionready`: `pyenv virtualenv 3.5.2 productionready`.
-7. Set the local virtualenv to `productionready`: `pyenv local productionready`.
-8. Reload the `pyenv` environment: `pyenv rehash`.
+# How to install
+## Build Docker container
+```bash
+docker build --tag django-app .
+docker tag django-app:latest sys0dm1n/django-realworld-example-app:v1.0
+docker login
+docker push sys0dm1n/django-realworld-example-app:v1.0
+```
+Build automation can be acheived by having a [Pro Dockerhub account](https://www.docker.com/pricing)
 
-If all went well then your command line prompt should now start with `(productionready)`.
+To run and test locally the image:
+```bash
+docker run --name django-app -d -p 5000:5000 django-app:latest
 
-If your command line prompt does not start with `(productionready)` at this point, try running `pyenv activate productionready` or `cd ../productionready-django-api`. 
+```
 
-If pyenv is still not working, visit us in the Thinkster Slack channel so we can help you out.
+```bash
+helm upgrade djano-app . -f values.yaml --namespace django --install --wait
+
+```
+
+# References:
+
+- [Docker Redis Cluster](https://hub.docker.com/r/bitnami/redis/)
+- [Docker RabbitMQ Cluster](https://hub.docker.com/r/bitnami/rabbitmq/)
+- [Docker MySQL Cluster](https://hub.docker.com/r/bitnami/mysql)

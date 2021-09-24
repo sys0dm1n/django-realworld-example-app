@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.env }}-{{ .Values.django-app.name }}-svc
+  namespace: {{ .Values.env }}
+  labels:
+    heritage: {{ .Release.Service }}
+    release: {{ .Release.Name }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version }}
+    app: {{ .Chart.Name }}
+spec:
+  selector:
+    app: {{ .Values.env }}-{{ .Values.django-app.name }}
+    env: {{ .Values.env }}
+  type: {{ .Values.django-app.type }}
+  ports:
+    - protocol: TCP
+      port: {{ .Values.django-app.port }}
+      targetPort: {{ .Values.django-app.targetPort }}
+      name: {{ .Values.django-app.name }}-port
+      nodePort: {{ .Values.django-app.nodePort }}

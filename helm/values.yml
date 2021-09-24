@@ -1,0 +1,28 @@
+env: prod
+
+image:
+  tag: 1.0
+  name: sys0dm1n/django-realworld-example-app
+
+django-app:
+  name: django-app
+  type: NodePort # exposes the Service on each Node's IP at a static nodePort
+  port: 5000 # deployment containerPort and service port
+  targetPort: 5000 # service targetPort used to expose the pod
+  nodePort: 30500
+  replicas: 3
+  mem_limits: 128Mi
+  cpu_limits: 100m
+  mem_requests: 128Mi
+  cpu_requests: 100m
+
+health_check: /api/
+health_initialDelaySeconds: 5
+health_timeoutSeconds: 2
+health_periodSeconds: 10
+
+# Horizontal Pod Autoscaler Configuration
+hpa:
+  minReplicas: 1
+  maxReplicas: 5
+  targetCPUUtilizationPercentage: 50

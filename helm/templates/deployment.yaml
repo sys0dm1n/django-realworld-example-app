@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.env }}-{{ .Values.django-app.name }}-deployment
+  namespace: {{ .Values.env }}
+  labels:
+    deployment-name: {{ .Values.env }}-{{ .Values.django-app.name }}-deployment
+    deployment-env: {{ .Values.env }}
+    heritage: {{ .Release.Service }}
+    release: {{ .Release.Name }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version }}
+    app: {{ .Chart.Name }}
+spec:
+  replicas: {{ .Values.django-app.replicas }}
+  strategy:
+#Running multiple versions of an application at the same time, stop old pods once new one is up and running
+    type: RollingUpdate
+    rollingUpdate:
+#The maximum number of Pods that can be created over the desired number of Pods
+      maxSurge: 100%
+#The maximum number of Pods that can be unavailable during the update process
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: {{ .Values.env }}-{{ .Values.django-app.name }}
+      env: {{ .Values.env }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.env }}-{{ .Values.django-app.name }}
+        env: {{ .Values.env }}
+        release: {{ .Release.Name }}
+    spec:
+      containers:
+      - name:  {{ .Values.env }}-{{ .Values.django-app.name }}-container
+        image: {{ .Values.image.name }}:{{ .Values.image.tag }}
+        ports:
+        - containerPort: {{ .Values.django-app.port }}
+        {{- if eq .Values.env "prod" -}}
+        resources:
+          limits:
+            cpu: {{ .Values.django-app.cpu_limits }}
+          requests:
+            cpu: {{ .Values.django-app.cpu_requests }}
+        {{- end }}
+        livenessProbe:
+          httpGet:
+             path: {{ .Values.health_check }}
+             port: {{ .Values.django-app.targetPort }}
+          initialDelaySeconds: {{ .Values.health_initialDelaySeconds }}
+          timeoutSeconds: {{ .Values.health_timeoutSeconds }}
+          periodSeconds: {{ .Values.health_periodSeconds }}
+        readinessProbe:
+          httpGet:
+            path: {{ .Values.health_check }}
+            port: {{ .Values.django-app.targetPort }}
+          initialDelaySeconds: {{ .Values.health_initialDelaySeconds }}
+          timeoutSeconds: {{ .Values.health_timeoutSeconds }}
+          periodSeconds: {{ .Values.health_periodSeconds }}
