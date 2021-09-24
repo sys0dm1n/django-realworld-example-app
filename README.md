@@ -31,7 +31,7 @@ docker run --name django-app -d -p 5000:5000 django-app:latest
 
 ```bash
 cd helm
-helm upgrade djano-app . -f values.yaml --namespace django --install
+helm upgrade --install -f values.yaml --namespace django --create-namespace django-app . --wait
 
 ```
 

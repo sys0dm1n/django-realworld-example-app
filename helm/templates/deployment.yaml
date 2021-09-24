@@ -36,13 +36,11 @@ spec:
         image: {{ .Values.image.name }}:{{ .Values.image.tag }}
         ports:
         - containerPort: {{ .Values.django.port }}
-        {{- if eq .Values.env "prod" -}}
         resources:
           limits:
             cpu: {{ .Values.django.cpu_limits }}
           requests:
             cpu: {{ .Values.django.cpu_requests }}
-        {{- end }}
         livenessProbe:
           httpGet:
              path: {{ .Values.health_check }}
