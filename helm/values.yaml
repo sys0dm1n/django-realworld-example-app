@@ -4,8 +4,8 @@ image:
   tag: 1.0
   name: sys0dm1n/django-realworld-example-app
 
-django-app:
-  name: django-app
+django:
+  name: django
   type: NodePort # exposes the Service on each Node's IP at a static nodePort
   port: 5000 # deployment containerPort and service port
   targetPort: 5000 # service targetPort used to expose the pod

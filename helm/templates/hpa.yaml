@@ -2,13 +2,13 @@
 apiVersion: autoscaling/v1
 kind: HorizontalPodAutoscaler
 metadata:
-  name: {{ .Values.env }}-{{ .Values.django-app.name }}
+  name: {{ .Values.env }}-{{ .Values.django.name }}
   namespace: {{ .Values.env }}
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: {{ .Values.env }}-{{ .Values.django-app.name }}-deployment
+    name: {{ .Values.env }}-{{ .Values.django.name }}-deployment
   minReplicas: {{ .Values.hpa.minReplicas }}
   maxReplicas: {{ .Values.hpa.maxReplicas }}
   metrics:
