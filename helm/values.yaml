@@ -1,25 +1,23 @@
 env: prod
 
 image:
-  tag: v1.0
+  tag: latest
   name: sys0dm1n/django-realworld-example-app
 
 django:
   name: django
-  type: NodePort # exposes the Service on each Node's IP at a static nodePort
+  type: LoadBalancer # exposes the Service externally using a cloud provider's load balancer
   port: 5000 # deployment containerPort and service port
   targetPort: 5000 # service targetPort used to expose the pod
   nodePort: 30500
   replicas: 3
-  mem_limits: 128Mi
   cpu_limits: 100m
-  mem_requests: 128Mi
   cpu_requests: 100m
 
 health_check: /api/
-health_initialDelaySeconds: 20
-health_timeoutSeconds: 5
-health_periodSeconds: 10
+health_initialDelaySeconds: 10
+health_timeoutSeconds: 2
+health_periodSeconds: 20
 
 # Horizontal Pod Autoscaler Configuration
 hpa:
