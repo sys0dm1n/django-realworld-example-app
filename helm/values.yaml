@@ -1,0 +1,26 @@
+env: prod
+
+image:
+  tag: latest
+  name: sys0dm1n/django-realworld-example-app
+
+django:
+  name: django
+  type: LoadBalancer # exposes the Service externally using a cloud provider's load balancer
+  port: 5000 # deployment containerPort and service port
+  targetPort: 5000 # service targetPort used to expose the pod
+  nodePort: 30500
+  replicas: 3
+  cpu_limits: 100m
+  cpu_requests: 100m
+
+health_check: /api/
+health_initialDelaySeconds: 10
+health_timeoutSeconds: 2
+health_periodSeconds: 20
+
+# Horizontal Pod Autoscaler Configuration
+hpa:
+  minReplicas: 1
+  maxReplicas: 5
+  targetCPUUtilizationPercentage: 50
